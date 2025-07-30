@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/> -->
+    
+    <title>并联电阻阻值计算</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 占满视口高度 */
+            max-height: 100vh; /* 占满视口高度 */
+            width: 100%;
+            font-size: 20px;
+        }       
+       
+
+        /* 页眉样式 */
+        .header {
+            background-color: #888;
+            line-height: 36px;
+            height: 36px;
+            color: white;
+            text-align: center;
+        }
+
+        page{
+            width: calc(100vw - 20px);
+            margin: 5px auto 0 auto;
+            align-items: center;            
+        }
+
+        .input {
+            margin: 0;
+            width: 98.5%;
+            padding: 4px;
+            border-radius: 6px;
+            font-size: 20px;
+        }       
+
+
+        .result {
+            margin: 0 ;
+            padding: 5px;
+            border: #888 solid 1px;
+            border-radius: 8px;
+            overflow-y: auto;            
+        }
+
+
+        /* 页脚样式 */
+        .footer {
+            position: absolute;
+            min-width: 100%;
+            bottom: 0;
+            background-color: #888;
+            color: white;
+            line-height: 36px;
+            height: 36px;
+            text-align: center;
+        }        
+      
+    </style>
+
+    <script>
+        //static-mp-caf71723-d628-4480-94cc-557a485104c8.next.bspapp.com/calcRV
+        //下面注释不能删除
+        // function Xchr(s:string){
+        // 	return s.replace(/(?<=\.[^.]*)\./g, '');
+            // s.replace(/(\.[^.]*)\./g, '$1');
+            //s.replace(/(?!^)\./g, '');
+            //  s.replace(/^([^.]*\.[^.]*)\./, '$1');
+            // s.replace(/\.(?=[^.]*\.)/, '');
+        // };
+
+        let inValue="";
+        const results=[];
+
+
+
+        function filter(s){
+            let  res=s.replace(/[^0-9.Mm Kk]/g,'').replace(/[。，；,;]/g,' ') ;
+            res=res.toLowerCase().replace(/([ mk])\1*/g, '$1');
+            
+            return res.trim();
+        };
+
+        function timLift0(s){
+            let index=0;
+            while(index<s.length && s[index]==='0'){
+                index++	
+            };
+            return s.slice(index);
+        };
+        
+        function calcMK(s){
+            let count=0;
+            for(let i=0;i<s.length;i++){
+                if(s[i]=="m" || s[i]=="k" ) count++;	
+            } 
+            return count;
+        };
+        
+        function hasChr(s,s1){
+            return s.indexOf(s1)>=0;		
+        };
+        
+        function hasDot(s){
+            s=s.replace(/(?<=\.[^.]*)\./g, '');//一次过删除多余的小数点
+            // console.log(s);
+            return s.indexOf('.')>=0;
+        };	
+        
+                
+        function multiply(arr){
+            let res=1;
+            arr.forEach(function(item){
+                res=res*item;
+            })
+            return res
+        };	
+
+        function add(calcValue){
+            results.unshift(inValue+' => ' + calcValue);
+        };
+        
+        function pconn(arr){
+            let i=0;
+            let molecule=multiply(arr);
+            let denominator=0;
+            let res='';
+            while (i<arr.length){
+                denominator +=molecule/arr[i]
+                i++;
+            };
+            
+            if(denominator!=0){
+                denominator=molecule/denominator;
+                denominator=denominator*1000;
+                if(denominator>=1000000){
+                    denominator=denominator/1000000;
+                    res=Number(denominator.toFixed(2))+'m';
+                } 
+                else if(denominator>=1000){
+                    denominator=denominator/1000;
+                    res= Number(denominator.toFixed(2))+'k';
+                }
+                else res= Number(denominator.toFixed(2))+''
+            } else res= '';
+            if(res!='') add(res)
+                            
+        };	
+
+        
+        function doCalc(s){
+            let res=filter(s);
+            if(res=="") {
+                document.getElementById("input").value="";
+                inValue="";
+                return;
+            };
+            inValue=res;
+            let arr=res.split(' ');
+            
+            for(let i=arr.length-1;i>=0;i--){
+                let item=arr[i];
+                item=timLift0(item);
+                if(item=='' || calcMK(item)>1 || item=='m' || item=='k' || item=='.' ){
+                    arr.splice(i,1);
+                    
+                } else {
+                    if(hasChr(item,'m')){
+                        if(hasDot(item)){
+                            item=item.replace('m','');
+                            arr[i]=Number(item)*1000 + '';
+                        } else {
+                            item=item.replace('m','.');
+                            arr[i]=Number(item)*1000 +'';						
+                        }
+                        
+                    } else if(hasChr(item,'k')){
+                        if(hasDot(item)){
+                            arr[i]=item.replace('k','');
+                        }else {
+                            arr[i]=item.replace('k','.');
+                        };	
+                    } else arr[i]= Number(item)/1000 + '';
+                };			
+            };
+            pconn(arr)
+        };
+   
+        function showResult(){
+            let res='';
+            results.forEach((item)=>{
+                res+=item+'\n';	
+            });
+            document.getElementById("result").innerText=res;
+            document.getElementById("input").value="";  
+        };
+
+        function myclick(){
+            inValue=document.getElementById("input").value;            
+            doCalc(inValue);
+            showResult();
+        }
+     
+    </script>
+  </head>
+
+  <body class="container">
+
+    <header class="header">计算电阻阻值</header>
+
+    <page>
+        <input id="input" class="input"  />
+        <div style="display:flex;flex-direction: row; margin: 5px 0;align-items: center; ">
+            <label style="margin-left: 20px;">并联计算</label>
+            <button style="margin:4px 0 4px 40px;padding: 2px 2px;font-size: 20px;" onclick="myclick()">开始计算</button>
+
+        </div>
+        
+ 
+        <p id="result" class="result">计算结果：</p>
+
+    </page>
+ 
+    <footer class="footer">万有引力工作室</footer>
+
+    <script>
+        // const statusBarHeight = window.outerHeight - window.innerHeight;
+        // const top001=document.getElementById("id001").getBoundingClientRect().top;
+        // const top002=document.getElementById("id002").getBoundingClientRect().top;
+        // let s="内容\n 001> "+ top001 +"\n 002>"+ top002 +"\n"+  statusBarHeight;
+        // document.getElementById("content").innerText=s;
+
+        // console.log(`Status bar height: ${statusBarHeight}px`);
+
+    </script>
+
+  </body>
+</html>
