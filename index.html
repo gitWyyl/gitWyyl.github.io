@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     
     <title>并联电阻阻值计算</title>
 
@@ -15,7 +15,7 @@
             flex-direction: column;
             min-height: 100vh; /* 占满视口高度 */
             max-height: 100vh; /* 占满视口高度 */
-            width: 100%;
+            width: 100vw;
             font-size: 20px;
         }       
        
@@ -23,24 +23,23 @@
         /* 页眉样式 */
         .header {
             background-color: #888;
-            line-height: 36px;
-            height: 36px;
+            padding: 5px 0;
             color: white;
             text-align: center;
         }
 
         page{
-            width: calc(100vw - 20px);
-            margin: 5px auto 0 auto;
+            margin: 5px 10px;
             align-items: center;            
         }
 
         .input {
             margin: 0;
-            width: 98.5%;
+            width: 100%;
             padding: 4px;
             border-radius: 6px;
             font-size: 20px;
+            box-sizing: border-box;
         }       
 
 
@@ -80,8 +79,6 @@
 
         let inValue="";
         const results=[];
-
-
 
         function filter(s){
             let  res=s.replace(/[^0-9.Mm Kk]/g,'').replace(/[。，；,;]/g,' ') ;
@@ -218,7 +215,8 @@
     <header class="header">计算电阻阻值</header>
 
     <page>
-        <input id="input" class="input"  />
+        <input id="input" class="input"  /> 
+        
         <div style="display:flex;flex-direction: row; margin: 5px 0;align-items: center; ">
             <label style="margin-left: 20px;">并联计算</label>
             <button style="margin:4px 0 4px 40px;padding: 2px 2px;font-size: 20px;" onclick="myclick()">开始计算</button>
@@ -231,17 +229,6 @@
     </page>
  
     <footer class="footer">万有引力工作室</footer>
-
-    <script>
-        // const statusBarHeight = window.outerHeight - window.innerHeight;
-        // const top001=document.getElementById("id001").getBoundingClientRect().top;
-        // const top002=document.getElementById("id002").getBoundingClientRect().top;
-        // let s="内容\n 001> "+ top001 +"\n 002>"+ top002 +"\n"+  statusBarHeight;
-        // document.getElementById("content").innerText=s;
-
-        // console.log(`Status bar height: ${statusBarHeight}px`);
-
-    </script>
 
   </body>
 </html>
